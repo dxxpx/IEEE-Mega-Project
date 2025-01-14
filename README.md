@@ -1,4 +1,4 @@
-# hackfest
+# IEEE Mega Project - SafeReach
 
 A new Flutter project.
 
