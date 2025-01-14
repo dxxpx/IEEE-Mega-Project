@@ -1,0 +1,30 @@
+https://firebase.google.com/docs/reference/rest/database
+
+To Get:
+"https://firestore.googleapis.com/v1/projects/hackfest-d74d3/databases/(default)/documents/updates/"
+
+To Post:
+"https://firestore.googleapis.com/v1/projects/hackfest-d74d3/databases/(default)/documents/updates/?key=AIzaSyCA5JJe1J3okqpAVkvICIg3eQB_CvvkJ-M"
+Headers:
+Content-type : "application/json"
+Body Example:
+{
+  "fields": {
+    "location": {
+      "stringValue": "Latitude: 22.572646, Longitude: 88.363895"
+    },
+    "isSevere": {
+      "booleanValue": true
+    },
+    "timestamp": {
+      "timestampValue": "2024-07-06T04:33:01.488Z"
+    },
+    "suggestion": {
+      "stringValue": "Don't go out"
+    },
+    "disasterType": {
+      "stringValue": "Hurricane"
+    }
+  }
+}
+
