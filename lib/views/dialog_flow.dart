@@ -1,8 +1,8 @@
 import 'package:dialog_flowtter/dialog_flowtter.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:hackfest/views/disaster.dart';
-import 'package:hackfest/views/emergency_contact.dart';
+import './disaster.dart';
+import './emergency_contact.dart';
 //https://shirsh94.medium.com/dialogflow-in-flutter-cf09b16daa6d everything about dialog flow
 
 class DialogFlow extends StatefulWidget {

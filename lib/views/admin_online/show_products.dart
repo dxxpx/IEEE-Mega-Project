@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:hackfest/views/admin_online/add_products.dart';
-import 'places.dart';
+import '../admin_online/add_products.dart';
 import 'placeScreen.dart';
 import '../Uicomponents.dart';
-import 'add_provisions.dart';
 import 'showProvisions.dart';
 
 class ProductListPage extends StatelessWidget {

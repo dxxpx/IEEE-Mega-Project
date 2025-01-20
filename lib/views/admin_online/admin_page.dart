@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hackfest/views/admin_online/admin_welcome_page.dart';
+import '../admin_online/admin_welcome_page.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 import '../Uicomponents.dart';
@@ -12,9 +12,11 @@ class AdminPage extends StatefulWidget {
 }
 
 class _AdminPageState extends State<AdminPage> {
-  final TextEditingController emailController = TextEditingController();
+  final TextEditingController emailController =
+      TextEditingController(text: "123");
 
-  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController passwordController =
+      TextEditingController(text: "123");
 
   Color _statusColor = Colors.green; // Default color is red
 

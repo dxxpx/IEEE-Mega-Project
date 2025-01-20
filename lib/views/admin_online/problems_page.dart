@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:hackfest/views/Uicomponents.dart';
+import '../Uicomponents.dart';
 
 class AllProblemsPage extends StatelessWidget {
   Future<void> _markAsRectified(String docId) async {

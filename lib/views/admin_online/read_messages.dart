@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sms_inbox/flutter_sms_inbox.dart';
-import 'package:hackfest/services/service_imp.dart';
-import 'package:hackfest/views/Uicomponents.dart';
+import '../../services/service_imp.dart';
+import '../Uicomponents.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 

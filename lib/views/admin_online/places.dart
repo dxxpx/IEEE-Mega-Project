@@ -20,12 +20,12 @@ List<Place> placesList = [
       name: 'Apollo pharmacy', address: '9th,Street Chennai', type: 'Medicals'),
   Place(name: 'Grocery1', address: '10th,Street Chennai', type: 'Groceries'),
   Place(
-      name: 'Hall 1',
+      name: 'T Hall',
       address: '11th,Street Chennai',
       type: 'Shelter',
       accomodation: '100'),
   Place(
-      name: 'Pharmacy 2',
+      name: 'Medicals',
       type: 'Medicals',
       address: '15th cross street',
       info: 'Open 24/7'),

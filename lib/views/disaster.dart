@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hackfest/views/ads.dart';
+import './ads.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:hackfest/views/Uicomponents.dart';
+import './Uicomponents.dart';
 
 class DisasterInfo {
   final String title;

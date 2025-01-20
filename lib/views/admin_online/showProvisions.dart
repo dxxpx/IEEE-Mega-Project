@@ -1,10 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hackfest/views/admin_online/add_products.dart';
-import 'package:hackfest/views/admin_online/add_provisions.dart';
-import 'places.dart';
-import 'placeScreen.dart';
+import '../admin_online/add_provisions.dart';
 import '../Uicomponents.dart';
 
 class ProvisionListPage extends StatelessWidget {

@@ -1,25 +1,29 @@
+import 'dart:convert';
 import 'package:battery/battery.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:hackfest/services/service_imp.dart';
-import 'package:hackfest/views/Uicomponents.dart';
-import 'package:hackfest/views/admin_online/placeScreen.dart';
-import 'package:hackfest/views/dialog_flow.dart';
-import 'package:hackfest/views/disaster.dart';
-import 'package:hackfest/views/emergency_contact.dart';
-import 'package:hackfest/views/user_offline/user_offline.dart';
-import 'package:hackfest/views/user_online/battery.dart';
-import 'package:hackfest/views/user_online/buy.dart';
-import 'package:hackfest/views/user_online/leaderboardPage.dart';
-import 'package:hackfest/views/user_online/maps_markers.dart';
-import 'package:hackfest/views/user_online/my_problems.dart';
-import 'package:hackfest/views/user_online/register_page.dart';
-import 'package:hackfest/views/user_online/rescue.dart';
+import '../../services/service_imp.dart';
+import '../Uicomponents.dart';
+import '../admin_online/placeScreen.dart';
+import '../dialog_flow.dart';
+import '../disaster.dart';
+import '../emergency_contact.dart';
+import '../user_offline/user_offline.dart';
+import '../user_online/battery.dart';
+import '../user_online/buy.dart';
+import '../user_online/leaderboardPage.dart';
+import '../user_online/maps_markers.dart';
+import '../user_online/my_problems.dart';
+import '../user_online/register_page.dart';
+import '../user_online/rescue.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import '../admin_online/add_provisions.dart';
-import 'package:hackfest/views/admin_online/showProvisions.dart';
+import '../admin_online/showProvisions.dart';
+import '../datascrape.dart';
+import '../floodChecker.dart';
+import 'insurancePage.dart';
 
 class WelcomePage extends StatefulWidget {
   @override
@@ -28,10 +32,14 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State with SingleTickerProviderStateMixin {
   final Battery _battery = Battery();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  late Position userPosition;
+  final double radiusInKm = 10.0;
+  late String currentloc = '';
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> _showBatteryAlert(BuildContext context) async {
     int batteryLevel = await _battery.batteryLevel;
-
     if (batteryLevel <= 100) {
       showDialog(
         context: context,
@@ -55,7 +63,8 @@ class _WelcomePageState extends State with SingleTickerProviderStateMixin {
 
   final User? user = FirebaseAuth.instance.currentUser;
   int _selectedIndex = 0;
-  Color _statusColor = Colors.green; // Default color is red
+  Color _statusColor = Colors.green;
+
   void _checkInternetStatus() async {
     print(await InternetConnectionCheckerPlus().hasConnection);
     final listener = InternetConnectionCheckerPlus()
@@ -76,22 +85,31 @@ class _WelcomePageState extends State with SingleTickerProviderStateMixin {
     'Profile Details',
   ];
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-
-  Future<void> _getCurrentLocationAndSave() async {
+  Future<void> getCurrentLocationAndSave() async {
+    print("Current Location loading...");
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
-    String location = '${position.latitude}, ${position.longitude}';
-    Service_Imp().storelocation(location);
-    User? user = _auth.currentUser;
-    if (user != null) {
-      await _firestore.collection('users').doc(user.uid).update({
-        'location': location,
-      });
-      setState(() {
-        // Update the UI with the new location
-      });
+    userPosition = position;
+    // checkFloodConditions(
+    //     latitude: '${position.latitude}', longitude: '${position.longitude}');
+    currentloc = '${position.latitude}, ${position.longitude}';
+    print('Current Location: $currentloc');
+    setState(() {});
+  }
+
+  String deobfuscate_Mask_Aadhar(String obfuscatedAadhar) {
+    String base64Encoded = obfuscatedAadhar.split('').reversed.join('');
+    String deobfuscated = utf8.decode(base64.decode(base64Encoded));
+    return maskAadhar(deobfuscated);
+  }
+
+  String maskAadhar(String aadharNumber) {
+    // Ensure the Aadhar number is exactly 12 digits long
+    if (aadharNumber.length == 12) {
+      // Mask all but the last 3 digits
+      return aadharNumber.replaceRange(0, 9, '*' * 9);
+    } else {
+      throw ArgumentError('Aadhar number must be 12 digits long');
     }
   }
 
@@ -137,16 +155,31 @@ class _WelcomePageState extends State with SingleTickerProviderStateMixin {
 
               return profilecard(
                   data['name'],
-                  data['adhar'],
+                  deobfuscate_Mask_Aadhar(data['adhar']),
                   data['people'].toString(),
                   humanReadableLocation,
-                  _getCurrentLocationAndSave,
+                  getCurrentLocationAndSave,
                   data['primaryphno'],
                   data['secondaryphno']);
             },
           );
         },
       ),
+    );
+  }
+
+  GeoPoint convertToGeoPoint(String location) {
+    final latitude = double.parse(location.split(',')[0].split(':')[1].trim());
+    final longitude = double.parse(location.split(',')[1].split(':')[1].trim());
+    return GeoPoint(latitude, longitude);
+  }
+
+  Future<double> calculateDistance(GeoPoint docLocation) async {
+    return Geolocator.distanceBetween(
+      userPosition.latitude,
+      userPosition.longitude,
+      docLocation.latitude,
+      docLocation.longitude,
     );
   }
 
@@ -164,25 +197,66 @@ class _WelcomePageState extends State with SingleTickerProviderStateMixin {
         }
         if (!snapshot.hasData || snapshot.data == null) {
           return Center(
-            child: Text("No updates available."),
+            child: Text("Updates are'nt available right Now."),
           );
         }
 
         final updates = snapshot.data!.docs;
 
-        return ListView.builder(
-          itemCount: updates.length,
-          itemBuilder: (BuildContext context, int index) {
-            final update = updates[index];
-            final bool isSevere = update['isSevere'];
+        //     return ListView.builder(
+        //       itemCount: updates.length,
+        //       itemBuilder: (BuildContext context, int index) {
+        //         final update = updates[index];
+        //         final bool isSevere = update['isSevere'];
+        //
+        //         return Updatetile(
+        //             update['disasterType'],
+        //             update['suggestion'],
+        //             update['timestamp'].toDate().toString().substring(0, 16),
+        //             isSevere,
+        //             update['location'],
+        //             context);
+        //       },
+        //     );
+        //   },
+        // );
+        return FutureBuilder(
+          future: Future.wait(
+            updates.map((update) async {
+              String locationString = update.get('location');
+              GeoPoint docLocation = convertToGeoPoint(locationString);
+              final double distanceInMeters =
+                  await calculateDistance(docLocation);
+              return distanceInMeters <= (radiusInKm * 1000) ? update : null;
+            }).toList(),
+          ),
+          builder: (BuildContext context,
+              AsyncSnapshot<List<DocumentSnapshot?>> filteredSnapshot) {
+            if (!filteredSnapshot.hasData || filteredSnapshot.data == null) {
+              return Center(
+                child: Text("Updates are'nt available right Now."),
+              );
+            }
 
-            return Updatetile(
-                update['disasterType'],
-                update['suggestion'],
-                update['timestamp'].toDate().toString().substring(0, 16),
-                isSevere,
-                update['location'],
-                context);
+            final filteredUpdates = filteredSnapshot.data!
+                .where((update) => update != null)
+                .toList();
+            // print('filteredUpdates.length = ${filteredUpdates.length}');
+            return ListView.builder(
+              itemCount: filteredUpdates.length,
+              itemBuilder: (BuildContext context, int index) {
+                final update = filteredUpdates[index]!;
+                final bool isSevere = update['isSevere'];
+
+                return Updatetile(
+                    update['disasterType'],
+                    update['suggestion'],
+                    update['timestamp'].toDate().toString().substring(0, 16),
+                    isSevere,
+                    update['location'],
+                    context);
+              },
+            );
           },
         );
       },
@@ -228,12 +302,49 @@ class _WelcomePageState extends State with SingleTickerProviderStateMixin {
     );
   }
 
-  void _addToDistressTable(String type) {
+  Future<void> addLocationFieldToDocuments() async {
+    await getCurrentLocationAndSave();
+    List<String> parts = currentloc.split(',');
+    String lat = parts[0].trim();
+    String long = parts[1].trim();
+    bool? isFlooded =
+        await checkFloodConditions(latitude: lat, longitude: long);
+    final FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+    try {
+      CollectionReference distressCollection = firestore.collection('distress');
+      QuerySnapshot querySnapshot = await distressCollection.get();
+      for (QueryDocumentSnapshot doc in querySnapshot.docs) {
+        String docId = doc.id;
+        await distressCollection.doc(docId).update({
+          'isFlooded': isFlooded,
+          'location': currentloc,
+        });
+      }
+
+      print('Successfully added isFlooded field to all documents.');
+    } catch (e) {
+      print('Error adding location field: $e');
+    }
+  }
+
+  void _addToDistressTable(String type) async {
+    await getCurrentLocationAndSave();
+    // addLocationFieldToDocuments();
+    List<String> parts = currentloc.split(',');
+    String lat = parts[0].trim();
+    String long = parts[1].trim();
+    bool? isFlooded =
+        await checkFloodConditions(latitude: lat, longitude: long);
+    print(
+        'IS FLOODED : ${checkFloodConditions(latitude: lat, longitude: long)}');
+
     FirebaseFirestore.instance.collection('distress').add({
       'userID': user!.uid,
       'type': type,
       'time': DateTime.now(),
-      // Add more fields as needed
+      'location': await currentloc,
+      'isFlooded': isFlooded
     });
   }
 
@@ -311,9 +422,9 @@ class _WelcomePageState extends State with SingleTickerProviderStateMixin {
 
   @override
   void initState() {
-    // TODO: implement initState
     _showBatteryAlert(context);
     super.initState();
+    getCurrentLocationAndSave();
   }
 
   @override
@@ -350,6 +461,18 @@ class _WelcomePageState extends State with SingleTickerProviderStateMixin {
         actions: [
           IconButton(
               onPressed: () {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => NewsPage()));
+              },
+              icon: Icon(Icons.newspaper_sharp)),
+          IconButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => Insurancepage()));
+              },
+              icon: Icon(Icons.cases_rounded)),
+          IconButton(
+              onPressed: () {
                 _showBatteryAlert(context);
               },
               icon: Icon(
@@ -377,11 +500,11 @@ class _WelcomePageState extends State with SingleTickerProviderStateMixin {
       ),
       body: _buildPage(_selectedIndex),
       bottomNavigationBar: BottomNavigationBar(
-        unselectedItemColor: Colors.grey, //
-        selectedItemColor: appblue, // <-- add this
-
+        unselectedItemColor: Colors.grey,
+        selectedItemColor: appblue,
         backgroundColor: Colors.black12,
         currentIndex: _selectedIndex,
+        showUnselectedLabels: true,
         onTap: (index) {
           setState(() {
             _selectedIndex = index;

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hackfest/services/service_imp.dart';
+import '../../services/service_imp.dart';
 
 class OpenAIEntryScreen extends StatefulWidget {
   const OpenAIEntryScreen({super.key});

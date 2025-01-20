@@ -1,9 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:hackfest/views/admin_online/placeScreen.dart';
-import 'package:hackfest/views/ads.dart';
-
 import '../Uicomponents.dart';
+import '../ads.dart';
 
 class Buy extends StatelessWidget {
   Future<void> _deleteProduct(String id) async {

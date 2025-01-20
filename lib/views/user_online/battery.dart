@@ -1,7 +1,7 @@
 import 'package:battery/battery.dart';
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
-import 'package:hackfest/views/Uicomponents.dart';
+import '../Uicomponents.dart';
 
 enum BatteryState {
   charging,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_state_notifier/flutter_state_notifier.dart';
-import 'package:hackfest/models/appstate.dart';
+
+import '../models/appstate.dart';
 
 class Changes extends StatelessWidget {
   const Changes({Key? key, required this.child}) : super(key: key);

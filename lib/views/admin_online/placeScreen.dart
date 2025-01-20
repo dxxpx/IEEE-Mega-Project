@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hackfest/views/Uicomponents.dart';
+import '../Uicomponents.dart';
 import 'addplaces.dart';
 import 'places.dart';
 
@@ -81,7 +81,7 @@ Widget PlaceTile(
                             : type == 'Medicals'
                                 ? Icons.medication_sharp
                                 : CupertinoIcons.cart_fill,
-                size: 49,
+                size: 40,
               ),
             ),
             Container(

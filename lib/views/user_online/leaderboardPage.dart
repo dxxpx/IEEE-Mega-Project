@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hackfest/views/Uicomponents.dart';
+import '../Uicomponents.dart';
 import 'package:share_plus/share_plus.dart';
 
 class LeaderboardPage extends StatelessWidget {

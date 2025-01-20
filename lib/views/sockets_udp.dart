@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-
+import 'package:network_info_plus/network_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:hackfest/views/Uicomponents.dart';
+import './Uicomponents.dart';
 
 class UdpSender extends StatefulWidget {
   @override
@@ -11,7 +11,15 @@ class UdpSender extends StatefulWidget {
 }
 
 class _UdpSenderState extends State<UdpSender> {
+  String? _receivedMessage;
   String? _selectedOption = "Food";
+  String? ipaddress;
+
+  @override
+  void initState() {
+    super.initState();
+    _getIPv4Address();
+  }
 
   Future<void> sendUdpMessage(String message, String ip, int port) async {
     final RawDatagramSocket socket =
@@ -20,6 +28,32 @@ class _UdpSenderState extends State<UdpSender> {
     socket.send(utf8.encode(message), InternetAddress(ip), port);
     print("sent");
     socket.close();
+  }
+
+  Future<void> _getIPv4Address() async {
+    final info = NetworkInfo();
+    String? ipv4Address = await info.getWifiIP();
+    setState(() {
+      ipaddress = ipv4Address;
+      print(ipaddress);
+    });
+  }
+
+  Future<void> startListening() async {
+    final RawDatagramSocket socket =
+        await RawDatagramSocket.bind(InternetAddress.anyIPv4, 4210);
+    socket.listen((RawSocketEvent event) {
+      if (event == RawSocketEvent.read) {
+        Datagram? datagram = socket.receive();
+        if (datagram != null) {
+          String message = utf8.decode(datagram.data);
+          setState(() {
+            _receivedMessage = message;
+          });
+          print('Received: $message');
+        }
+      }
+    });
   }
 
   void _sendMessage() async {

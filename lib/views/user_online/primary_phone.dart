@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:hackfest/views/user_online/secondary_phone.dart';
+import '../user_online/secondary_phone.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 import 'package:telephony/telephony.dart';
@@ -141,7 +141,7 @@ class _PrimaryPhoneState extends State<PrimaryPhone> {
                 Text('Enter Your Confirmation Code', style: heading_Tstlye()),
                 SizedBox(height: 10),
                 Text(
-                  'We have sent a confirmation code to your phone number',
+                  'We have sent a confirmation code to ${_phoneController.text}',
                   style: content_Tstlye(),
                   textAlign: TextAlign.center,
                 ),

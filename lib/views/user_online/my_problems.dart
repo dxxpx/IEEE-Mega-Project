@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:hackfest/views/user_online/add_problem.dart';
-import 'package:hackfest/views/user_online/all_problems.dart';
+import '../user_online/add_problem.dart';
+import '../user_online/all_problems.dart';
 
 import '../Uicomponents.dart';
 

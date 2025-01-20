@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:hackfest/services/service_imp.dart';
-import 'package:hackfest/services/services.dart';
-import 'package:hackfest/views/user_online/welcome_page.dart';
+import '../../services/service_imp.dart';
+import '../../services/services.dart';
+import '../user_online/welcome_page.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'package:provider/provider.dart';
-import 'package:hackfest/views/Uicomponents.dart';
+import '../Uicomponents.dart';
 import '../../viewmodels/changes.dart';
 
 class AdditionalDetails extends StatefulWidget {
@@ -111,6 +111,7 @@ class _AdditionalDetailsState extends State<AdditionalDetails> {
     TextEditingController adharController = TextEditingController();
     TextEditingController peopleController = TextEditingController();
     TextEditingController ageController = TextEditingController();
+    String encryptedAdhar = '';
 
     return Padding(
       padding: EdgeInsets.all(16),
@@ -122,21 +123,18 @@ class _AdditionalDetailsState extends State<AdditionalDetails> {
             decoration: InputDecoration(labelText: 'Adhar'),
           ),
           SizedBox(height: 10),
-          Text('Number of People: ', style: heading_Tstlye()),
           TextFormField(
             controller: peopleController,
             keyboardType: TextInputType.number,
-            decoration: t_boxdecor(hintText: "Number of People"),
+            decoration: InputDecoration(labelText: 'Number of People'),
           ),
           SizedBox(height: 40),
           SizedBox(height: 10),
-          SizedBox(height: 10),
-          Text('Number of People: ', style: heading_Tstlye()),
           TextFormField(
-              controller: ageController,
-              decoration: t_boxdecor(hintText: "Age of People:")),
-          Text("Enter the ages of people seperated by comma",
-              style: content_Tstlye()),
+            controller: ageController,
+            decoration: InputDecoration(labelText: 'Ages of People'),
+          ),
+          Text("Enter the ages of people seperated by comma"),
           SizedBox(height: 30),
           ElevatedButton(
             onPressed: () async {

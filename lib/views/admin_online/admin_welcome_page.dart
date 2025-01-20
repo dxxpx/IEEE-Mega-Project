@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:hackfest/services/service_imp.dart';
-import 'package:hackfest/views/admin_online/problems_page.dart';
-import 'package:hackfest/views/admin_online/read_messages.dart';
-import 'package:hackfest/views/admin_online/show_products.dart';
-import 'package:hackfest/views/admin_online/updates.dart';
-import 'package:hackfest/views/Uicomponents.dart';
+import '../../services/service_imp.dart';
+import '../admin_online/problems_page.dart';
+import '../admin_online/read_messages.dart';
+import '../admin_online/show_products.dart';
+import '../admin_online/updates.dart';
+import '../Uicomponents.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../datascrape.dart';
 
 class AdminWelcomePage extends StatefulWidget {
   @override
@@ -24,26 +26,32 @@ class _AdminWelcomePageState extends State<AdminWelcomePage> {
         ),
         backgroundColor: appblue,
         iconTheme: backButton(color: Colors.white),
-        actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => ProductListPage()));
-              },
-              icon: Icon(
-                Icons.shopping_cart,
-                color: Colors.white,
-              ))
-        ],
+        //   actions: [
+        //     IconButton(
+        //         onPressed: () {
+        //           Navigator.of(context).push(
+        //               MaterialPageRoute(builder: (context) => ProductListPage()));
+        //         },
+        //         icon: Icon(
+        //           Icons.shopping_cart,
+        //           color: Colors.white,
+        //         )),
+        //     // IconButton(
+        //     //     onPressed: () {
+        //     //       Navigator.of(context)
+        //     //           .push(MaterialPageRoute(builder: (context) => NewsPage()));
+        //     //     },
+        //     //     icon: Icon(Icons.newspaper_sharp))
+        //   ],
       ),
       body: Column(
         children: [
-          TextButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => AllProblemsPage()));
-              },
-              child: Text("View Inconveniences Posted")),
+          // TextButton(
+          //     onPressed: () {
+          //       Navigator.of(context).push(
+          //           MaterialPageRoute(builder: (context) => AllProblemsPage()));
+          //     },
+          //     child: Text("View Inconveniences Posted")),
           Expanded(
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hackfest/views/user_online/maps_markers.dart';
+import '../views/user_online/maps_markers.dart';
 import 'package:intl/intl.dart';
 
 Color appblue = Color(0XFF4D88D7);
@@ -73,7 +73,7 @@ ButtonStyle buttonStyle({Color? bgcolor}) {
 
 String GetDate(String dateString) {
   DateTime dateTime = DateTime.parse(dateString);
-  String formattedDate = DateFormat('d MMMM').format(dateTime);
+  String formattedDate = DateFormat('MMM d').format(dateTime);
   return formattedDate;
 }
 
